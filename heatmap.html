@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+	path,
+	line {
+		fill: none;
+		stroke: transparent;
+		shape-rendering: crispEdges;
+	}
+</style>
+
+<div class="heatmap"></div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+	d3.csv('data.csv', function ( response ) {
+
+		var data = response.map(function( item ) {
+				var newItem = {};
+				newItem.country = item.x;
+				newItem.product = item.y;
+				newItem.value = item.value;
+
+				return newItem;
+		})
+
+		var margin = {top: 50, right: 0, bottom: 20, left: 110},
+				width = 810 - margin.right - margin.left,
+				height = 250 - margin.top - margin.bottom;
+
+		var cellWidth = width/d3.map(data, function(d){return d.product;}).keys().length,
+				cellSpace = 3;
+
+		var colorScale = d3.scaleThreshold()
+				.domain([0.85, 2.5])
+				.range(["#eee","#C6D1DD","#7D98B4","#48698D"]);
+
+		var svg = d3.select('.heatmap')
+				.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		var x_elements = d3.set(data.map(function( item ) { return item.product; } )).values(),
+				y_elements = d3.set(data.map(function( item ) { return item.country; } )).values();
+
+		var xScale = d3.scaleBand()
+				.domain(x_elements)
+				.rangeRound([0, x_elements.length * cellWidth]);
+
+		var xAxis = svg.append('g')
+				.call(d3.axisTop(xScale))
+				.selectAll("text")
+				.style("text-anchor", "start")
+        .attr("dy", ".5em")
+				.attr("transform", function (d) {
+            return "rotate(-35)";
+        });
+
+		var yScale = d3.scaleBand()
+				.domain(y_elements)
+				.rangeRound([0, y_elements.length * cellWidth]);
+
+		var yAxis = svg.append('g')
+				.call(d3.axisLeft(yScale));
+
+		var cells = svg.selectAll('rect')
+				.data(data)
+				.enter().append('g').append('rect')
+				.attr('class', 'cell')
+				.attr('width', cellWidth - cellSpace)
+				.attr('height', cellWidth - cellSpace)
+				.attr('y', function(d) { return yScale(d.country); })
+				.attr('x', function(d) { return xScale(d.product); })
+				.attr('fill', function(d) { return colorScale(d.value); });
+	});
+</script>

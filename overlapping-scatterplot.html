@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reusable Bubble Chart</title>
+    <style>
+      circle {
+        fill-opacity: 0.5;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="chart"></div>
+
+    <script src="http://d3js.org/d3.v4.min.js" type="text/javascript"></script>
+
+<script>
+
+  let data = [
+    {x: 10, y: 10, r: 20},
+    {x: 10, y: 20, r: 10},
+    {x: 10, y: 30, r: 20},
+    {x: 10, y: 40, r: 20},
+    {x: 10, y: 50, r: 10},
+    {x: 10, y: 60, r: 30},
+    {x: 10, y: 70, r: 20},
+    {x: 10, y: 80, r: 10},
+    {x: 20, y: 10, r: 30}
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: },
+    // {x: , y: , r: }
+  ];
+
+  var margin = {top: 20, right: 20, bottom: 20, left: 50},
+    width = 810 - margin.right - margin.left,
+    height = 250 - margin.top - margin.bottom;
+
+  var svg = d3.select('#chart')
+    .append('svg')
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+  var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var colors = ["#c6d1dd","#335f96"];
+
+  var colorScale = d3.scaleLinear()
+    .domain(d3.extent(data, function(d) {return d.r;}))
+    .range(colors)
+    .interpolate(d3.interpolateHcl);
+
+  var x = d3.scaleLinear()
+    .range([0, width])
+    .domain([0, 100]);
+
+  var y = d3.scaleLinear()
+    .range([height, 0])
+    .domain([0,100]);
+
+  g.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+  .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", "0.71em")
+    .attr("text-anchor", "end")
+    .text("Frequency");
+
+  g.append("g")
+    .attr("class", "axis axis--y")
+    .call(d3.axisLeft(y));
+
+  g.selectAll('circle')
+    .data(data)
+    .enter()
+    .append('circle')
+    .attr('cx', function(d){return x(d.x);})
+    .attr('cy', function(d){return y(d.y);})
+    .attr('r', function(d){return d.r;})
+    .style('fill', function(d){return colorScale(d.r);});
+
+
+
+
+
+//       var selection = layers.get('content').selectAll('circle')
+//         .data(data);
+
+//       selection.exit().remove();
+
+//       selection.enter().append('circle')
+//         .attr('cx', function(d){return x(d.x);})
+//         .attr('cy', function(d){return y(d.y);})
+//         .attr('r', function(d){return d.r;})
+//         .style('fill', function(d){return colorScale(d.r);});
+
+//     }, 10);
+
+//     skeleton
+//       .autoResize('width')
+//       .on('resize', visualize)
+//       .on('data', visualize);
+//   }
+// );
+
+//---------------------------------------------------
+// Use the bubble chart
+//---------------------------------------------------
+
+// var bubbles = [
+//   {x: 10, y: 10, r: 20},
+//   {x: 10, y: 20, r: 10},
+//   {x: 10, y: 30, r: 20},
+//   {x: 10, y: 40, r: 20},
+//   {x: 10, y: 50, r: 10},
+//   {x: 10, y: 60, r: 30},
+//   {x: 10, y: 70, r: 20},
+//   {x: 10, y: 80, r: 10},
+//   {x: 20, y: 10, r: 30}
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: },
+//   // {x: , y: , r: }
+// ];
+
+
+
+// new BubbleChart('#chart')
+//   .data(bubbles)
+//   // handle bubbleClick event
+//   .on('bubbleClick', function(d){ alert(JSON.stringify(d)); });
+</script>
+  </body>
+</html>
+
+
+
